@@ -31,6 +31,7 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
 
   try {
     if (ghl.checkInstallationExists(req.query.locationId as string)) {
+      console.log("Instalation found");
       const request = await ghl
         .requests(req.query.locationId as string)
         .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, JSON.stringify({
@@ -45,6 +46,7 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
           }
         });
     } else {
+      console.log("Instalation not found");
       /* NOTE: This flow would only work if you have a distribution type of both Location & Company & OAuth read-write scopes are configured. 
         The line `await ghl.getLocationTokenFromCompanyToken(req.query.companyId as string, req.query.locationId as string)`
          is calling the `getLocationTokenFromCompanyToken` method of the
