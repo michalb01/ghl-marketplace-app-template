@@ -29,25 +29,52 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
   await ghl.authorizationHandler(code as string);
 
   try {
-    const request = await ghl
-      .requests(req.query.locationId as string)
-      .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, {
-        headers: {
-          Version: "2021-07-28",
-        },
-        body: JSON.stringify({
-          name: "PayU",
-          description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
-          paymentsUrl: "https://payu-9gvx.onrender.com/payment",
-          queryUrl: "https://payu-9gvx.onrender.com/query",
-          imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-        })
-      })
-    return res.send(request.data)
+    if (ghl.checkInstallationExists(req.params.locationId)) {
+      const request = await ghl
+        .requests(req.query.locationId as string)
+        .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, {
+          headers: {
+            Version: "2021-07-28",
+          },
+          body: JSON.stringify({
+            name: "PayU",
+            description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
+            paymentsUrl: "https://payu-9gvx.onrender.com/payment",
+            queryUrl: "https://payu-9gvx.onrender.com/query",
+            imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
+          })
+        });
+      return res.send(request.data);
+    } else {
+      /* NOTE: This flow would only work if you have a distribution type of both Location & Company & OAuth read-write scopes are configured. 
+        The line `await ghl.getLocationTokenFromCompanyToken(req.query.companyId as string, req.query.locationId as string)`
+         is calling the `getLocationTokenFromCompanyToken` method of the
+        `GHL` class. This method is used to retrieve the location token for a specific location within a company. */
+      await ghl.getLocationTokenFromCompanyToken(
+        req.query.companyId as string,
+        req.query.locationId as string
+      );
+      const request = await ghl
+        .requests(req.query.locationId as string)
+        .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, {
+          headers: {
+            Version: "2021-07-28",
+          },
+          body: JSON.stringify({
+            name: "PayU",
+            description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
+            paymentsUrl: "https://payu-9gvx.onrender.com/payment",
+            queryUrl: "https://payu-9gvx.onrender.com/query",
+            imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
+          })
+        });
+      return res.send(request.data);
+    }
   } catch (error) {
     console.log(error);
+    res.send(error).status(400)
   }
-
+  
   res.redirect("https://app.gohighlevel.com/");
 });
 
