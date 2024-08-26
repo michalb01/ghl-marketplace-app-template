@@ -30,10 +30,10 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
   await ghl.authorizationHandler(code as string);
 
   try {
-    if (ghl.checkInstallationExists(req.params.locationId)) {
+    if (ghl.checkInstallationExists(req.query.locationId as string)) {
       const request = await ghl
-        .requests(req.params.locationId as string)
-        .post(`/payments/custom-provider/provider?locationId=${req.params.locationId}`, JSON.stringify({
+        .requests(req.query.locationId as string)
+        .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, JSON.stringify({
           name: "PayU",
           description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
           paymentsUrl: "https://payu-9gvx.onrender.com/payment",
@@ -50,12 +50,12 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
          is calling the `getLocationTokenFromCompanyToken` method of the
         `GHL` class. This method is used to retrieve the location token for a specific location within a company. */
       await ghl.getLocationTokenFromCompanyToken(
-        req.params.companyId as string,
-        req.params.locationId as string
+        req.query.companyId as string,
+        req.query.locationId as string
       );
       const request = await ghl
-        .requests(req.params.locationId as string)
-        .post(`/payments/custom-provider/provider?locationId=${req.params.locationId}`, JSON.stringify({
+        .requests(req.query.locationId as string)
+        .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, JSON.stringify({
           name: "PayU",
           description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
           paymentsUrl: "https://payu-9gvx.onrender.com/payment",
