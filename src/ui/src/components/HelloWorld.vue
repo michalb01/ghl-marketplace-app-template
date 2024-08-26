@@ -2,7 +2,7 @@
   <div class="hello">
     <h1>Hej przydało by się</h1>
     <p>
-      Hej
+      Hej kurwa
       <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
     </p>
     <h3>:D</h3>
@@ -12,7 +12,7 @@
     </ul>
     <h3>Essential Links</h3>
     <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
+      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Dos</a></li>
       <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
       <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
       <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
