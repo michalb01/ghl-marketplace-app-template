@@ -33,13 +33,13 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
     if (ghl.checkInstallationExists(req.params.locationId)) {
       const request = await ghl
         .requests(req.query.locationId as string)
-        .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, JSON.stringify({
+        .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, {
           name: "PayU",
           description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
           paymentsUrl: "https://payu-9gvx.onrender.com/payment",
           queryUrl: "https://payu-9gvx.onrender.com/query",
           imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-        }), {
+        }, {
           headers: {
             Version: "2021-07-28",
           }
