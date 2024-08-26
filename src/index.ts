@@ -69,7 +69,6 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.log(error);
-    res.send(error).status(400)
   }
 
   res.redirect("https://app.gohighlevel.com/");
