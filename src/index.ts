@@ -40,7 +40,9 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
       { headers: { "content-type": "application/x-www-form-urlencoded" } }
     );
     
+    console.log("CIPA START");
     console.log(resp.data);
+    console.log("CIPA KONIEC");
 
   } catch (error: any) {
     console.error(error?.response?.data);
