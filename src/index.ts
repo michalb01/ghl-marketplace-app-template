@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { GHL } from "./ghl";
 import * as CryptoJS from 'crypto-js'
 import { json } from "body-parser";
+import axios from "axios";
 
 const path = __dirname + "/ui/dist/";
 
@@ -35,14 +36,14 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
         .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, {
           headers: {
             Version: "2021-07-28",
-          },
+          }/*,
           body: JSON.stringify({
             name: "PayU",
             description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
             paymentsUrl: "https://payu-9gvx.onrender.com/payment",
             queryUrl: "https://payu-9gvx.onrender.com/query",
             imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-          })
+          })*/
         });
       return res.send(request.data);
     } else {
@@ -59,14 +60,14 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
         .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, {
           headers: {
             Version: "2021-07-28",
-          },
+          }/*,
           body: JSON.stringify({
             name: "PayU",
             description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
             paymentsUrl: "https://payu-9gvx.onrender.com/payment",
             queryUrl: "https://payu-9gvx.onrender.com/query",
             imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-          })
+          })*/
         });
       return res.send(request.data);
     }
@@ -74,7 +75,7 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
     console.log(error);
     res.send(error).status(400)
   }
-  
+
   res.redirect("https://app.gohighlevel.com/");
 });
 
