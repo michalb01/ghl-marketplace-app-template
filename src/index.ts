@@ -27,47 +27,24 @@ const port = process.env.PORT;
 /*`app.get("/authorize-handler", async (req: Request, res: Response) => { ... })` sets up an example how you can authorization requests */
 app.get("/authorize-handler", async (req: Request, res: Response) => {
   const { code } = req.query;
-  await ghl.authorizationHandler(code as string);
 
-  /*try {
-    if (ghl.checkInstallationExists(req.query.locationId as string)) {
-      console.log("Instalation found");
-      const request = await ghl
-        .requests(req.query.locationId as string)
-        .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, JSON.stringify({
-          name: "PayU",
-          description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
-          paymentsUrl: "https://payu-9gvx.onrender.com/payment",
-          queryUrl: "https://payu-9gvx.onrender.com/query",
-          imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-        }), {
-          headers: {
-            Version: "2021-07-28",
-          }
-        });
-    } else {
-      console.log("Instalation not found");
-      await ghl.getLocationTokenFromCompanyToken(
-        req.query.companyId as string,
-        req.query.locationId as string
-      );
-      const request = await ghl
-        .requests(req.query.locationId as string)
-        .post(`/payments/custom-provider/provider?locationId=${req.query.locationId}`, JSON.stringify({
-          name: "PayU",
-          description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
-          paymentsUrl: "https://payu-9gvx.onrender.com/payment",
-          queryUrl: "https://payu-9gvx.onrender.com/query",
-          imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-        }), {
-          headers: {
-            Version: "2021-07-28",
-          }
-        });
-    }
-  } catch (error) {
-    console.log(error);
-  }*/
+  try {
+    const resp = await axios.post(
+      `${process.env.GHL_API_DOMAIN}/oauth/token`,
+      {
+        client_id: process.env.GHL_APP_CLIENT_ID,
+        client_secret: process.env.GHL_APP_CLIENT_SECRET,
+        grant_type: "authorization_code",
+        code,
+      },
+      { headers: { "content-type": "application/x-www-form-urlencoded" } }
+    );
+    
+    console.log(resp.data);
+
+  } catch (error: any) {
+    console.error(error?.response?.data);
+  }
 
   res.redirect("https://app.gohighlevel.com/");
 });
@@ -123,6 +100,8 @@ app.get("/example-api-call-location", async (req: Request, res: Response) => {
           },
         });
       return res.send(request.data);*/
+
+      console.log(req.params.locationId);
 
       const request = await ghl
         .requests(req.params.locationId as string)
