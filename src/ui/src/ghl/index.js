@@ -7,22 +7,31 @@ export class GHL {
 
   async getUserData() {
     const key = await new Promise((resolve) => {
-      window.parent.postMessage({ message: "REQUEST_USER_DATA" }, "*");
-      window.addEventListener("message", ({ data }) => {
-        if (data.message === "REQUEST_USER_DATA_RESPONSE") {
-          resolve(data.payload)
-        }
-      });
+        const handleMessage = ({ data }) => {
+            if (data.message === "REQUEST_USER_DATA_RESPONSE") {
+                window.removeEventListener("message", handleMessage);
+                resolve(data.payload);
+            }
+        };
+
+        window.addEventListener("message", handleMessage);
+        window.parent.postMessage({ message: "REQUEST_USER_DATA" }, "*");
     });
+
     const res = await fetch('/decrypt-sso', {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({key})
-      });
-    const data = await res.json()
-    return data
-  }
+        body: JSON.stringify({ key })
+    });
+
+    if (!res.ok) {
+        throw new Error('Failed to decrypt SSO data');
+    }
+
+    const data = await res.json();
+    return data;
 }
+
