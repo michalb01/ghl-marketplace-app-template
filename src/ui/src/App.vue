@@ -9,9 +9,11 @@
 </template>
 
 <script>
-async function onClick() {
+var data;
+
+function onClick() {
   console.log("Started onClick");
-  var d = await window.ghl.getUserData();
+  var d = data;
   console.log("Got user data");
   var locationId = d.activeLocation;
   console.log("Got locationId")
@@ -26,7 +28,7 @@ export default {
   components: {},
   async mounted(){
     
-    const data = await window.ghl.getUserData();
+    data = await window.ghl.getUserData();
     console.log("user-details", data)
   }
 }
