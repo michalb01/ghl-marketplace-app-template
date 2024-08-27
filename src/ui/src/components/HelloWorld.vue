@@ -31,7 +31,7 @@
 
 <script>
 
-/*function getUserData() {
+function getUserData() {
     const key = new Promise((resolve) => {
       window.parent.postMessage({ message: "REQUEST_USER_DATA" }, "*");
       window.addEventListener("message", ({ data }) => {
@@ -50,7 +50,7 @@
       });
     const data = res.json()
     return data
-  }
+  }/*
 
 function sendClient() {
   var client_id = document.getElementById("client_id");
