@@ -4,7 +4,7 @@
     <input type="text" id="client_id"><br>
     <label>Client Secret</label><br>
     <input type="text" id="client_secret"><br>
-    <button onclick="onClick()">Submit</button>
+    <button @click="onClick">Submit</button>
   </div>
 </template>
 
