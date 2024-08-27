@@ -5,7 +5,6 @@ import dotenv from "dotenv";
 import { GHL } from "./ghl";
 import * as CryptoJS from 'crypto-js'
 import { json } from "body-parser";
-import axios from "axios";
 
 const path = __dirname + "/ui/dist/";
 
@@ -16,51 +15,18 @@ app.use(json({ type: 'application/json' }))
 /*`app.use(express.static(path));` is setting up a middleware in the Express server. The
 `express.static` middleware is used to serve static files such as HTML, CSS, JavaScript, and images. */
 app.use(express.static(path));
+
+/* The line `const ghl = new GHL();` is creating a new instance of the `GHL` class. It is assigning
+this instance to the variable `ghl`. This allows you to use the methods and properties defined in
+the `GHL` class to interact with the GoHighLevel API. */
 const ghl = new GHL();
+
 const port = process.env.PORT;
 
 /*`app.get("/authorize-handler", async (req: Request, res: Response) => { ... })` sets up an example how you can authorization requests */
 app.get("/authorize-handler", async (req: Request, res: Response) => {
   const { code } = req.query;
-
   await ghl.authorizationHandler(code as string);
-
-  try {
-    const resp = await axios.post(
-      `${process.env.GHL_API_DOMAIN}/oauth/token`,
-      {
-        client_id: process.env.GHL_APP_CLIENT_ID,
-        client_secret: process.env.GHL_APP_CLIENT_SECRET,
-        grant_type: "authorization_code",
-        code,
-      },
-      { headers: { "content-type": "application/x-www-form-urlencoded" } }
-    );
-
-    const locationId = resp.data.locationId;
-
-    console.log(`Location ID: ${resp.data.locationId}`);
-    console.log(`Access Token: ${resp.data.access_token}`);
-
-    const resp2 = await axios.post(
-      `https://services.leadconnectorhq.com/payments/custom-provider/provider?locationId=${locationId}`,
-      {
-        "name": "PayU",
-        "description": "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
-        "paymentsUrl": "https://payu-9gvx.onrender.com/payment",
-        "queryUrl": "https://payu-9gvx.onrender.com/query",
-        "imageUrl": "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-      },
-      { headers: {
-        Authorization: `Bearer ${resp.data.access_token}`,
-        Version: "2021-07-28"
-      }}
-    );
-
-  } catch (error: any) {
-    console.error(error?.response?.data);
-  }
-
   res.redirect("https://app.gohighlevel.com/");
 });
 
@@ -93,7 +59,7 @@ app.get("/example-api-call-location", async (req: Request, res: Response) => {
     there is an existing installation for the provided locationId and returns a boolean value
     indicating whether the installation exists or not. */
   try {
-    /*if (ghl.checkInstallationExists(req.params.locationId)) {
+    if (ghl.checkInstallationExists(req.params.locationId)) {
       const request = await ghl
         .requests(req.query.locationId as string)
         .get(`/contacts/?locationId=${req.query.locationId}`, {
@@ -103,6 +69,10 @@ app.get("/example-api-call-location", async (req: Request, res: Response) => {
         });
       return res.send(request.data);
     } else {
+      /* NOTE: This flow would only work if you have a distribution type of both Location & Company & OAuth read-write scopes are configured. 
+        The line `await ghl.getLocationTokenFromCompanyToken(req.query.companyId as string, req.query.locationId as string)`
+         is calling the `getLocationTokenFromCompanyToken` method of the
+        `GHL` class. This method is used to retrieve the location token for a specific location within a company. */
       await ghl.getLocationTokenFromCompanyToken(
         req.query.companyId as string,
         req.query.locationId as string
@@ -114,23 +84,8 @@ app.get("/example-api-call-location", async (req: Request, res: Response) => {
             Version: "2021-07-28",
           },
         });
-      return res.send(request.data);*/
-
-      console.log(req.params.locationId);
-
-      const request = await ghl
-        .requests(req.params.locationId as string)
-        .post(`/payments/custom-provider/provider?locationId=${req.params.locationId}`, JSON.stringify({
-          name: "PayU",
-          description: "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
-          paymentsUrl: "https://payu-9gvx.onrender.com/payment",
-          queryUrl: "https://payu-9gvx.onrender.com/query",
-          imageUrl: "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-        }), {
-          headers: {
-            Version: "2021-07-28",
-          }
-        });
+      return res.send(request.data);
+    }
   } catch (error) {
     console.log(error);
     res.send(error).status(400)
