@@ -1,8 +1,8 @@
-//import { createApp } from "vue";
-//import App from "./App.vue";
-//import { GHL } from "./ghl";
+import { createApp } from "vue";
+import App from "./App.vue";
+import { GHL } from "./ghl";
 
-//const ghl = new GHL();
-//window.ghl = ghl;
+const ghl = new GHL();
+window.ghl = ghl;
 
-//createApp(App).mount("#app");
+createApp(App).mount("#app");

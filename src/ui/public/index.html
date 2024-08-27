@@ -6,51 +6,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
-    <script>
-      window.sso = window.sso || {
-        async getUserInfo() {
-            const sessionKey = await new Promise(resolve => {
-                window.parent.postMessage({ message: 'REQUEST_USER_DATA' }, '*');
-                window.addEventListener('message', ({ data }) => {
-                    if (data.message === 'REQUEST_USER_DATA_RESPONSE') {
-                        resolve(data.payload);
-                    }
-                });
-            });
-
-            const res = await fetch('/api/sso/ghl', {
-                headers: { 'x-sso-session': sessionKey }
-            });
-
-            const data = await res.json();
-            return data;
-        }
-      };
-
-      document.addEventListener('DOMContentLoaded', async () => {
-          const data = await window.sso.getUserInfo();
-
-          console.log(data);
-
-          /*data.userId = '•••••••••••••••••••• (redacted)';
-          data.companyId = '•••••••••••••••••••• (redacted)';
-
-          document.getElementById('user-session-loading').style.display = 'none';
-          document.getElementById('txt-user-session').innerHTML = JSON.stringify(
-              data,
-              null,
-              2
-          );*/
-      });
-    </script>
   </head>
   <body>
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
-
-
-
-    <!-- <div id="app"></div> -->
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
   </body>
 </html>

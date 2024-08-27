@@ -23,6 +23,8 @@ const port = process.env.PORT;
 app.get("/authorize-handler", async (req: Request, res: Response) => {
   const { code } = req.query;
 
+  await ghl.authorizationHandler(code as string);
+
   try {
     const resp = await axios.post(
       `${process.env.GHL_API_DOMAIN}/oauth/token`,

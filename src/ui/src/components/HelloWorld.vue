@@ -1,18 +1,19 @@
 <template>
   <div class="hello">
-    <h1>Hej przydało by się</h1>
+    <h1>{{ msg }}</h1>
     <p>
-      Hej kurwa
+      For a guide and recipes on how to configure / customize this project,<br>
+      check out the
       <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
     </p>
-    <h3>:D</h3>
+    <h3>Installed CLI Plugins</h3>
     <ul>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
     </ul>
     <h3>Essential Links</h3>
     <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Dos</a></li>
+      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
       <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
       <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
       <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
@@ -30,41 +31,6 @@
 </template>
 
 <script>
-
-function getUserData() {
-    const key = new Promise((resolve) => {
-      window.parent.postMessage({ message: "REQUEST_USER_DATA" }, "*");
-      window.addEventListener("message", ({ data }) => {
-        if (data.message === "REQUEST_USER_DATA_RESPONSE") {
-          resolve(data.payload)
-        }
-      });
-    });
-    const res = fetch('/decrypt-sso', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({key})
-      });
-    const data = res.json()
-    return data
-  }/*
-
-function sendClient() {
-  var client_id = document.getElementById("client_id");
-  var client_secret = document.getElementById("client_secret");
-
-  var data = getUserData();
-
-  console.log("User data");
-  console.log(data);
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${1}`)
-}*/
-
 export default {
   name: 'HelloWorld',
   props: {
