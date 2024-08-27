@@ -31,8 +31,8 @@
 
 <script>
 
-async function getUserData() {
-    const key = await new Promise((resolve) => {
+/*function getUserData() {
+    const key = new Promise((resolve) => {
       window.parent.postMessage({ message: "REQUEST_USER_DATA" }, "*");
       window.addEventListener("message", ({ data }) => {
         if (data.message === "REQUEST_USER_DATA_RESPONSE") {
@@ -40,7 +40,7 @@ async function getUserData() {
         }
       });
     });
-    const res = await fetch('/decrypt-sso', {
+    const res = fetch('/decrypt-sso', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -48,22 +48,22 @@ async function getUserData() {
         },
         body: JSON.stringify({key})
       });
-    const data = await res.json()
+    const data = res.json()
     return data
   }
 
-async function sendClient() {
+function sendClient() {
   var client_id = document.getElementById("client_id");
   var client_secret = document.getElementById("client_secret");
 
-  var data = await getUserData();
+  var data = getUserData();
 
   console.log("User data");
   console.log(data);
 
   var xhr = new XMLHttpRequest();
   xhr.open("POST", `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${1}`)
-}
+}*/
 
 export default {
   name: 'HelloWorld',
