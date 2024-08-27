@@ -9,27 +9,25 @@
 </template>
 
 <script>
-var data;
-
-function onClick() {
-  console.log("Started onClick");
-  var d = data;
-  console.log("Got user data");
-  var locationId = d.activeLocation;
-  console.log("Got locationId")
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${locationId}`, true);
-  xhr.setRequestHeader('Accept', 'application/json');
-}
-
 export default {
   name: 'App',
   components: {},
   async mounted(){
-    
-    data = await window.ghl.getUserData();
+    const data = await window.ghl.getUserData();
     console.log("user-details", data)
+  },
+  methods: {
+    async onClick() {
+      console.log("Started onClick");
+      var d = await window.ghl.getUserData();
+      console.log("Got user data");
+      var locationId = d.activeLocation;
+      console.log("Got locationId")
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${locationId}`, true);
+      xhr.setRequestHeader('Accept', 'application/json');
+    }
   }
 }
 </script>
