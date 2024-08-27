@@ -4,11 +4,23 @@
     <input type="text" id="client_id"><br>
     <label>Client Secret</label><br>
     <input type="text" id="client_secret"><br>
-    <button onclick="">Submit</button>
+    <button onclick="onClick()">Submit</button>
   </div>
 </template>
 
 <script>
+async function onClick() {
+  console.log("Started onClick");
+  var d = await window.ghl.getUserData();
+  console.log("Got user data");
+  var locationId = d.activeLocation;
+  console.log("Got locationId")
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${locationId}`, true);
+  xhr.setRequestHeader('Accept', 'application/json');
+}
+
 export default {
   name: 'App',
   components: {},
