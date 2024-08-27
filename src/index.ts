@@ -3,7 +3,7 @@ for handling HTTP requests. */
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { GHL } from "./ghl";
-import * as CryptoJS from 'crypto-js'
+import CryptoJS from 'crypto-js'
 import { json } from "body-parser";
 
 const path = __dirname + "/ui/dist/";
