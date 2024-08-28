@@ -23,6 +23,15 @@ export default {
       console.log("Got user data");
       var locationId = d.activeLocation;
       console.log("Got locationId")
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "https://backend.leadconnectorhq.com/oauth/token")
+      xhr.setRequestHeader('content-type', "application/x-www-form-urlencoded")
+      //body
+      xhr.setRequestHeader('client_id', process.env.GHL_APP_CLIENT_ID)
+      xhr.setRequestHeader('client_secret', process.env.GHL_APP_CLIENT_SECRET)
+      xhr.setRequestHeader('grant_type', authorization_code)
+      xhr.setRequestHeader('locationId')
+
 
       var xhr = new XMLHttpRequest();
       xhr.open("POST", `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${locationId}`, true);
