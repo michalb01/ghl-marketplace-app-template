@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Payment</title>
+    </head>
+    <body>
+
+        <noscript>
+            <strong>We're sorry but this page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+        </noscript>
+        <script>
+            function onWindowLoad() {
+                window.addEventListener('message', function(event) {
+                    // Security check: Ensure the message is from the expected origin
+                    if (event.origin !== window.location.origin) {
+                        console.warn('Received message from unexpected origin:', event.origin);
+                        return;
+                    }
+
+                    if (event.data.type === 'payment_initiate_props') {
+                        // Log the entire payment data object
+                        console.log('Received payment initiation props:', event.data);
+
+                        // Optionally, you can log individual properties if needed:
+                        console.log('Publishable Key:', event.data.publishableKey);
+                        console.log('Amount:', event.data.amount);
+                        console.log('Currency:', event.data.currency);
+                        console.log('Mode:', event.data.mode);
+                        console.log('Product Details:', event.data.productDetails);
+                        console.log('Contact Info:', event.data.contact);
+                        console.log('Order ID:', event.data.orderId);
+                        console.log('Transaction ID:', event.data.transactionId);
+                        console.log('Subscription ID:', event.data.subscriptionId);
+                        console.log('Location ID:', event.data.locationId);
+                    }
+                }, false);
+
+                window.parent.postMessage({
+                    type: 'custom_provider_ready',
+                    loaded: true
+                }, '*');
+
+                alert("custom_provider_ready post sent!")
+            }
+
+            window.onload = onWindowLoad;
+        </script>
+    </body>
+</html>
