@@ -1,6 +1,6 @@
 const sqlite3 = require('better-sqlite3');
 
-const db = new sqlite3('./database.db', sqlite3.OPEN_READWRITE, (err) => {
+const db = new sqlite3('/var/data/database.db', sqlite3.OPEN_READWRITE, (err) => {
     if (err)
         console.error("Failed to create/open DB file. " + err);
     else

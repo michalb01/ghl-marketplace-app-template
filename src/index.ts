@@ -33,12 +33,10 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
 
 app.post("/payu-settings", async (req: Request, res: Response) => {
   var data = req.body;
-  console.log(`Acquired client settings: ${data}`);
+  console.log(`Acquired client settings: {locationId: ${data.locationId}, client_id: ${data.client_id}, client_secret: ${data.client_secret}}`);
 
-  var refresh_token = db.get_refresh_token(data.locationId);
+  var refresh_token = db.get_refresh_token(data.locationId).refresh_token;
   console.log(`Got refresh token: ${refresh_token}`);
-
-  
 });
 
 /*`app.get("/example-api-call", async (req: Request, res: Response) => { ... })` shows you how you can use ghl object to make get requests
