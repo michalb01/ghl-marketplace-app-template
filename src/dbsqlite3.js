@@ -26,4 +26,8 @@ function get_refresh_token(location_id) {
     return db.prepare(`SELECT * FROM Keys WHERE location_id = ?`).bind(location_id).get();
 }
 
-module.exports = { init_database, add_refresh_token, get_refresh_token };
+function update_refresh_token(location_id, refresh_token) {
+    db.prepare(`UPDATE Keys SET refresh_token = ? WHERE location_id = ?`).run(refresh_token, location_id);
+}
+
+module.exports = { init_database, add_refresh_token, get_refresh_token, update_refresh_token };

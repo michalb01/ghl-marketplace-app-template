@@ -7,6 +7,7 @@ import CryptoJS from 'crypto-js'
 import { json } from "body-parser";
 import * as db from './dbsqlite3';
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
+import qs from "qs";
 
 const path = __dirname + "/ui/dist/";
 
@@ -39,23 +40,50 @@ app.post("/payu-settings", async (req: Request, res: Response) => {
   var refresh_token = db.get_refresh_token(data.locationId).refresh_token;
   console.log(`Got refresh token: ${refresh_token}`);
 
-  const resp = await axios.post(
-    `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${data.locationId}`,
-    {
-      "live": {
-      "apiKey": "FXZHvUJZZQxryRFLeX",
-      "publishableKey": `${data.client_id}/${data.client_secret}`
-    },
-      "test": {
+  try {
+    const resp = await axios.post(
+      `${process.env.GHL_API_DOMAIN}/oauth/token`,
+      qs.stringify({
+        client_id: process.env.GHL_APP_CLIENT_ID,
+        client_secret: process.env.GHL_APP_CLIENT_SECRET,
+        grant_type: "refresh_token",
+        refresh_token: refresh_token,
+      }),
+      { headers: { "content-type": "application/x-www-form-urlencoded" } }
+    );
+
+    var refresh_token = resp.data.refresh_token;
+    var access_token = resp.data.access_token;
+
+    console.log(`Access token: ${access_token}`);
+    console.log(`Refresh token: ${refresh_token}`);
+
+    db.update_refresh_token(data.locationId, refresh_token);
+    console.log("Updated refresh token to database!");
+
+    const resp2 = await axios.post(
+      `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${data.locationId}`,
+      {
+        "live": {
         "apiKey": "FXZHvUJZZQxryRFLeX",
         "publishableKey": `${data.client_id}/${data.client_secret}`
-      }
-    },
-    { headers: {
-      Authorization: `Bearer ${refresh_token}`,
-      Version: "2021-07-28"
-    }}
-  );
+      },
+        "test": {
+          "apiKey": "FXZHvUJZZQxryRFLeX",
+          "publishableKey": `${data.client_id}/${data.client_secret}`
+        }
+      },
+      { headers: {
+        Authorization: `Bearer ${refresh_token}`,
+        Version: "2021-07-28"
+      }}
+    );
+
+    console.log("Post Sent!");
+  }
+  catch (e) {
+    console.error(e);
+  }
 });
 
 /*`app.get("/example-api-call", async (req: Request, res: Response) => { ... })` shows you how you can use ghl object to make get requests
