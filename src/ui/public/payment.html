@@ -13,12 +13,6 @@
         </noscript>
         <script>
             window.addEventListener('message', function(event) {
-                    // Security check: Ensure the message is from the expected origin
-                    if (((event.origin !== window.location.origin) && event.origin !== window.parent.location.origin)) {
-                        console.warn('Received message from unexpected origin:', event.origin);
-                        return;
-                    }
-
                     if (event.data.type === 'payment_initiate_props') {
                         // Log the entire payment data object
                         console.log('Received payment initiation props:', event.data);
