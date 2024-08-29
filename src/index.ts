@@ -55,8 +55,8 @@ app.post("/payu-settings", async (req: Request, res: Response) => {
     var refresh_token = resp.data.refresh_token;
     var access_token = resp.data.access_token;
 
-    console.log(`Access token: ${access_token}`);
-    console.log(`Refresh token: ${refresh_token}`);
+    console.log(`New access token: ${access_token}`);
+    console.log(`New refresh token: ${refresh_token}`);
 
     db.update_refresh_token(data.locationId, refresh_token);
     console.log("Updated refresh token to database!");
@@ -74,7 +74,7 @@ app.post("/payu-settings", async (req: Request, res: Response) => {
         }
       },
       { headers: {
-        Authorization: `Bearer ${refresh_token}`,
+        Authorization: `Bearer ${access_token}`,
         Version: "2021-07-28"
       }}
     );
