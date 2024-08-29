@@ -4,7 +4,7 @@ import CryptoJS from 'crypto-js';
 
 import { Model, TokenType } from "./model";
 
-const db = require("./dbsqlite3")
+import * as db from './dbsqlite3';
 
 /* The GHL class is responsible for handling authorization, making API requests, and managing access
 tokens and refresh tokens for a specific resource. */
