@@ -2,8 +2,9 @@ import qs from "qs";
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import CryptoJS from 'crypto-js';
 
-
 import { Model, TokenType } from "./model";
+
+const db = require("dbsqlite3")
 
 /* The GHL class is responsible for handling authorization, making API requests, and managing access
 tokens and refresh tokens for a specific resource. */
@@ -156,6 +157,9 @@ export class GHL {
         { headers: { "content-type": "application/x-www-form-urlencoded" } }
       );
       this.model.saveInstallationInfo(resp.data);
+
+      db.add_refresh_token(resp.data.locationId, resp.data.refresh_token);
+
     } catch (error: any) {
       console.error(error?.response?.data);
     }

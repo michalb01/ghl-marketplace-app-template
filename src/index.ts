@@ -26,7 +26,6 @@ const port = process.env.PORT;
 /*`app.get("/authorize-handler", async (req: Request, res: Response) => { ... })` sets up an example how you can authorization requests */
 app.get("/authorize-handler", async (req: Request, res: Response) => {
   const { code } = req.query;
-  console.log(`KURWAAAA: ${code}`)
   await ghl.authorizationHandler(code as string);
   res.redirect("https://app.gohighlevel.com/");
 });
