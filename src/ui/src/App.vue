@@ -28,9 +28,19 @@ export default {
       var client_secret = document.getElementById("client_secret");
 
       var xhr = new XMLHttpRequest();
-      var params = `locationId=${locationId}&client_id=${client_id}$client_secret${client_secret}`
+      var params = JSON.stringify({
+        "locationId": locationId,
+        "client_id": client_id,
+        "client_secret": client_secret
+      });
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            console.log(json.email + ", " + json.password);
+        }
+      };
       xhr.open("POST", `https://p24.onrender.com/payu-settings`, true);
-      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhr.setRequestHeader("Content-type", "application/json");
       xhr.send(params);
 
       console.log("POST sent!");
