@@ -38,10 +38,10 @@
                 }, false);
 
             function onWindowLoad() {
-                window.parent.postMessage({
+                window.parent.postMessage(JSON.stringify({
                     type: 'custom_provider_ready',
                     loaded: true
-                }, '*');
+                }), '*');
 
                 console.log("custom_provider_ready post sent!")
             }
