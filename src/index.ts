@@ -30,6 +30,11 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
   res.redirect("https://app.gohighlevel.com/");
 });
 
+app.post("/payu-settings", async (req: Request, res: Response) => {
+  console.log("PAYU SETTINGS");
+  console.log(req.query);
+});
+
 /*`app.get("/example-api-call", async (req: Request, res: Response) => { ... })` shows you how you can use ghl object to make get requests
  ghl object in abstract would handle all of the authorization part over here. */
 app.get("/example-api-call", async (req: Request, res: Response) => {

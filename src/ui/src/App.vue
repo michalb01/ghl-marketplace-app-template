@@ -24,9 +24,15 @@ export default {
       var locationId = d.activeLocation;
       console.log("Got locationId")
 
+      var client_id = document.getElementById("client_id");
+      var client_secret = document.getElementById("client_secret");
+
       var xhr = new XMLHttpRequest();
-      xhr.open("POST", `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${locationId}`, true);
-      xhr.setRequestHeader('Accept', 'application/json');
+      var params = `locationId=${locationId}&client_id=${client_id}$client_secret${client_secret}`
+      xhr.open("POST", `https://p24.onrender.com/payu-settings`, true);
+      xhr.send(params);
+
+      console.log("POST sent!");
     }
   }
 }
