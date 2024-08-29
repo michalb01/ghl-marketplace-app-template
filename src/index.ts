@@ -6,6 +6,7 @@ import { GHL } from "./ghl";
 import CryptoJS from 'crypto-js'
 import { json } from "body-parser";
 import * as db from './dbsqlite3';
+import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 
 const path = __dirname + "/ui/dist/";
 
@@ -37,6 +38,24 @@ app.post("/payu-settings", async (req: Request, res: Response) => {
 
   var refresh_token = db.get_refresh_token(data.locationId).refresh_token;
   console.log(`Got refresh token: ${refresh_token}`);
+
+  const resp = await axios.post(
+    `https://services.leadconnectorhq.com/payments/custom-provider/connect?locationId=${data.locationId}`,
+    {
+      "live": {
+      "apiKey": "FXZHvUJZZQxryRFLeX",
+      "publishableKey": `${data.client_id}/${data.client_secret}`
+    },
+      "test": {
+        "apiKey": "FXZHvUJZZQxryRFLeX",
+        "publishableKey": `${data.client_id}/${data.client_secret}`
+      }
+    },
+    { headers: {
+      Authorization: `Bearer ${refresh_token}`,
+      Version: "2021-07-28"
+    }}
+  );
 });
 
 /*`app.get("/example-api-call", async (req: Request, res: Response) => { ... })` shows you how you can use ghl object to make get requests
