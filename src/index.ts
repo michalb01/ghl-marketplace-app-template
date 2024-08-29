@@ -31,40 +31,6 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
   const { code } = req.query;
   await ghl.authorizationHandler(code as string);
 
-  try {
-    const resp = await axios.post(
-      `${process.env.GHL_API_DOMAIN}/oauth/token`,
-      {
-        client_id: process.env.GHL_APP_CLIENT_ID,
-        client_secret: process.env.GHL_APP_CLIENT_SECRET,
-        grant_type: "authorization_code",
-        code,
-      },
-      { headers: { "content-type": "application/x-www-form-urlencoded" } }
-    );
-    
-    var locationId = resp.data.locationId;
-    var access_token = resp.data.access_token;
-
-    const resp2 = await axios.post(
-      `https://services.leadconnectorhq.com/payments/custom-provider/provider?locationId=${locationId}`,
-      {
-        "name": "PayU",
-        "description": "Operator płatności internetowych, działający jako system, który daje możliwość dokonywania oraz otrzymywania wpłat przez Internet",
-        "paymentsUrl": "https://payu-9gvx.onrender.com/payment",
-        "queryUrl": "https://payu-9gvx.onrender.com/query",
-        "imageUrl": "https://msgsndr-private.storage.googleapis.com/marketplace/apps/66cb484efa377f800409bd8e/3425444f-a209-4fb3-a198-e4d975525d76.png"
-      },
-      { headers: {
-        Authorization: `Bearer ${access_token}`,
-        Version: "2021-07-28"
-      }}
-    );
-
-  } catch (error: any) {
-    console.error(error?.response?.data);
-  }
-
   res.redirect("https://app.gohighlevel.com/");
 });
 
