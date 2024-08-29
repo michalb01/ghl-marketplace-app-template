@@ -32,7 +32,7 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
 
 app.post("/payu-settings", async (req: Request, res: Response) => {
   console.log("PAYU SETTINGS");
-  console.log(req.query);
+  console.log(req.body);
 });
 
 /*`app.get("/example-api-call", async (req: Request, res: Response) => { ... })` shows you how you can use ghl object to make get requests
