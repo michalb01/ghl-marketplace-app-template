@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { GHL } from "./ghl";
 import CryptoJS from 'crypto-js'
 import { json } from "body-parser";
+import * as db from './dbsqlite3';
 
 const path = __dirname + "/ui/dist/";
 
@@ -31,8 +32,13 @@ app.get("/authorize-handler", async (req: Request, res: Response) => {
 });
 
 app.post("/payu-settings", async (req: Request, res: Response) => {
-  console.log("PAYU SETTINGS");
-  console.log(req.body);
+  var data = req.body;
+  console.log(`Acquired client settings: ${data}`);
+
+  var refresh_token = db.get_refresh_token(data.locationId);
+  console.log(`Got refresh token: ${refresh_token}`);
+
+  
 });
 
 /*`app.get("/example-api-call", async (req: Request, res: Response) => { ... })` shows you how you can use ghl object to make get requests

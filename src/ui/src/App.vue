@@ -24,8 +24,8 @@ export default {
       var locationId = d.activeLocation;
       console.log("Got locationId")
 
-      var client_id = document.getElementById("client_id");
-      var client_secret = document.getElementById("client_secret");
+      var client_id = document.getElementById("client_id").value;
+      var client_secret = document.getElementById("client_secret").value;
 
       var xhr = new XMLHttpRequest();
       var params = JSON.stringify({
