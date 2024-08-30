@@ -28,59 +28,25 @@
                     .then(response => response.json())
                     .then(data => {
                         console.log(data.ip);
+
+                        var params = JSON.stringify({
+                            client_id: client_id,
+                            client_secret: client_secret,
+                            customerIp: data.ip,
+                            contactName: data.contact.name,
+                            transactionId: data.transactionId,
+                            currencyCode: data.currency.toUpperCase(),
+                            amount: data.amount * 100
+                        });
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
+                        xhr.setRequestHeader("Content-type", "application/json")
+                        xhr.send(params);
                     })
                     .catch(error => {
                         console.log('Error:', error);
                     });
                 console.log(`IP: ${ip}`);
-
-                var params = JSON.stringify({
-                    client_id: client_id,
-                    client_secret: client_secret,
-                    customerIp: ip,
-                    contactName: data.contact.name,
-                    transactionId: data.transactionId,
-                    currencyCode: data.currency.toUpperCase(),
-                    amount: data.amount * 100
-                });
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
-                xhr.setRequestHeader("Content-type", "application/json")
-                xhr.send(params);
-
-                /*var params = `grant_type=client_credentials&client_id=${client_id}&client_secret=${client_secret}`;
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = () => {
-                    if (xhr.readyState === 4) {
-                        var resp = xhr.response;
-                        console.log(resp);
-
-                        var access_token = resp.access_token;
-
-                        var xhr2 = new XMLHttpRequest();
-                        var params2 = JSON.stringify({
-                            customerIp: ip,
-                            merchantPosId: client_id,
-                            description: `${data.contact.name} ${data.transactionId}`,
-                            currencyCode: `${data.currency.toUpperCase()}`,
-                            totalAmount: data.amount * 100,
-                            products: [
-                                {
-                                    name: `${data.transactionId}`,
-                                    unitPrice: data.amount * 100,
-                                    quantity: 1
-                                }
-                            ]
-                        });
-                        xhr2.open("POST", `https://secure.snd.payu.com/api/v2_1/orders`, true);
-                        xhr2.setRequestHeader("Content-type", "application/json");
-                        xhr2.setRequestHeader("Authorization", `Bearer ${access_token}`);
-                        xhr2.send(params2);
-                    }
-                };
-                xhr.open("POST", `https://secure.snd.payu.com/pl/standard/user/oauth/authorize`, true);
-                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhr.send(params);*/
             }, false);
 
             function onWindowLoad() {
