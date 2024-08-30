@@ -8,6 +8,7 @@ import { json } from "body-parser";
 import * as db from './dbsqlite3';
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import qs from "qs";
+import open, {openApp, apps} from 'open';
 
 const path = __dirname + "/ui/dist/";
 
