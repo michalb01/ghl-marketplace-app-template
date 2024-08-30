@@ -145,58 +145,6 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
   }
 });
 
-app.post("/verify", async (req: Request, res: Response) => {
-  const { transactionId } = req.body;
-  if (!transactionId) {
-    return res.status(400).send("Transaction ID is required");
-  }
-
-  try {
-    // Get access token from PayU
-    var params = `grant_type=client_credentials&client_id=${process.env.PAYU_CLIENT_ID}&client_secret=${process.env.PAYU_CLIENT_SECRET}`;
-    const resp = await axios.post(
-      "https://secure.snd.payu.com/pl/standard/user/oauth/authorize",
-      params,
-      { headers: { "Content-type": "application/x-www-form-urlencoded" } }
-    );
-    var access_token = resp.data.access_token;
-
-    // Fetch payment status from PayU
-    const paymentStatusResp = await fetch(`https://secure.snd.payu.com/api/v2_1/orders/${transactionId}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${access_token}`,
-      }
-    });
-
-    if (paymentStatusResp.ok) {
-      const paymentData = await paymentStatusResp.json();
-
-      // Parse the response
-      const order = paymentData.order;
-      const status = order.status;
-      const orderId = order.orderId;
-
-      if (status === 'COMPLETED') {
-        res.status(200).json({
-          status: 'COMPLETED',
-          chargeId: orderId
-        });
-      } else {
-        res.status(200).json({
-          status: status
-        });
-      }
-    } else {
-      res.status(paymentStatusResp.status).send(paymentStatusResp.statusText);
-    }
-  } catch (e) {
-    console.error(e);
-    res.status(500).send("Error checking payment status");
-  }
-});
-
-
 app.post("/decrypt-sso",async (req: Request, res: Response) => {
   const {key} = req.body || {}
   if(!key){
