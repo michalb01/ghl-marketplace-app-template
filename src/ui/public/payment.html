@@ -49,13 +49,13 @@
 
                 fetch('https://api.ipify.org?format=json')
                     .then(response => response.json())
-                    .then(d => {
-                        console.log(d.ip);
+                    .then(ipData => {
+                        console.log(ipData.ip);
 
                         var params = JSON.stringify({
                             client_id: client_id,
                             client_secret: client_secret,
-                            customerIp: d.ip,
+                            customerIp: ipData.ip,
                             contactName: data.contact.name,
                             transactionId: data.transactionId,
                             currencyCode: data.currency.toUpperCase(),
@@ -74,9 +74,6 @@
                                 button.onclick = function() {
                                     window.open(uri, "_blank");
                                 };
-
-                                // Check payment status periodically
-                                checkPaymentStatus(data.transactionId);
                             }
                         };
                         xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
@@ -87,34 +84,10 @@
                         console.log('Error:', error);
                     });
 
-                console.log(`IP: ${d.ip}`);
+                // Removed the incorrect reference to `d`
+                console.log(`IP fetch completed`);
             }
         }, false);
-
-        function checkPaymentStatus(transactionId) {
-            // Use polling or a similar method to check the payment status
-            setInterval(function() {
-                fetch(`https://p24.onrender.com/verify?transactionId=${transactionId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'COMPLETED') {
-                            // Send message to parent window
-                            window.parent.postMessage(JSON.stringify({
-                                type: 'custom_element_success_response',
-                                chargeId: data.chargeId
-                            }), '*');
-
-                            console.log("Payment completed. Message sent to parent window.");
-
-                            // Stop checking once payment is completed
-                            clearInterval(this);
-                        }
-                    })
-                    .catch(error => {
-                        console.log('Error:', error);
-                    });
-            }, 5000); // Check every 5 seconds
-        }
 
         function onWindowLoad() {
             window.parent.postMessage(JSON.stringify({
