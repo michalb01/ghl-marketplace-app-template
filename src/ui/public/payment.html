@@ -41,52 +41,80 @@
 
             if (data.type === 'payment_initiate_props') {
                 console.log('Received payment initiation props:', data);
-            }
 
-            var client_data = data.publishableKey;
-            const splited_client_data = client_data.split("/");
-            var client_id = splited_client_data[0];
-            var client_secret = splited_client_data[1];
+                var client_data = data.publishableKey;
+                const splited_client_data = client_data.split("/");
+                var client_id = splited_client_data[0];
+                var client_secret = splited_client_data[1];
 
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(d => {
-                    console.log(d.ip);
+                fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(d => {
+                        console.log(d.ip);
 
-                    var params = JSON.stringify({
-                        client_id: client_id,
-                        client_secret: client_secret,
-                        customerIp: d.ip,
-                        contactName: data.contact.name,
-                        transactionId: data.transactionId,
-                        currencyCode: data.currency.toUpperCase(),
-                        amount: data.amount * 100
+                        var params = JSON.stringify({
+                            client_id: client_id,
+                            client_secret: client_secret,
+                            customerIp: d.ip,
+                            contactName: data.contact.name,
+                            transactionId: data.transactionId,
+                            currencyCode: data.currency.toUpperCase(),
+                            amount: data.amount * 100
+                        });
+                        var xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
+                                var json = JSON.parse(xhr.responseText);
+                                var uri = json.uri;
+
+                                // Show the button and set up click event
+                                var button = document.getElementById('paymentButton');
+                                button.style.display = 'block'; // Show the button
+
+                                button.onclick = function() {
+                                    window.open(uri, "_blank");
+                                };
+
+                                // Check payment status periodically
+                                checkPaymentStatus(data.transactionId);
+                            }
+                        };
+                        xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
+                        xhr.setRequestHeader("Content-type", "application/json");
+                        xhr.send(params);
+                    })
+                    .catch(error => {
+                        console.log('Error:', error);
                     });
-                    var xhr = new XMLHttpRequest();
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            var json = JSON.parse(xhr.responseText);
-                            var uri = json.uri;
 
-                            // Show the button and set up click event
-                            var button = document.getElementById('paymentButton');
-                            button.style.display = 'block'; // Show the button
-
-                            button.onclick = function() {
-                                window.open(uri, "_blank");
-                            };
-                        }
-                    };
-                    xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
-                    xhr.setRequestHeader("Content-type", "application/json");
-                    xhr.send(params);
-                })
-                .catch(error => {
-                    console.log('Error:', error);
-                });
-
-            console.log(`IP: ${d.ip}`);
+                console.log(`IP: ${d.ip}`);
+            }
         }, false);
+
+        function checkPaymentStatus(transactionId) {
+            // Use polling or a similar method to check the payment status
+            setInterval(function() {
+                fetch(`https://p24.onrender.com/verify?transactionId=${transactionId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'COMPLETED') {
+                            // Send message to parent window
+                            window.parent.postMessage(JSON.stringify({
+                                type: 'custom_element_success_response',
+                                chargeId: data.chargeId
+                            }), '*');
+
+                            console.log("Payment completed. Message sent to parent window.");
+
+                            // Stop checking once payment is completed
+                            clearInterval(this);
+                        }
+                    })
+                    .catch(error => {
+                        console.log('Error:', error);
+                    });
+            }, 5000); // Check every 5 seconds
+        }
 
         function onWindowLoad() {
             window.parent.postMessage(JSON.stringify({
