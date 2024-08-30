@@ -32,10 +32,42 @@
                         console.log(resp);
 
                         var access_token = resp.access_token;
+
+                        var ip = fetch('https://api.ipify.org?format=json')
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data.ip);
+                            })
+                            .catch(error => {
+                                console.log('Error:', error);
+                            });
+                        console.log(`IP: ${ip}`);
+
+                        var xhr2 = new XMLHttpRequest();
+                        var params2 = JSON.stringify({
+                            customerIp: ip,
+                            merchantPosId: client_id,
+                            description: `${data.contact.name} ${data.transactionId}`,
+                            currencyCode: `${data.currency.toUpperCase()}`,
+                            totalAmount: data.amount * 100,
+                            products: [
+                                {
+                                    name: `${data.transactionId}`,
+                                    unitPrice: data.amount * 100,
+                                    quantity: 1
+                                }
+                            ]
+                        });
+                        xhr2.open("POST", `https://secure.snd.payu.com/api/v2_1/orders`, true);
+                        xhr2.setRequestHeader("Content-type", "application/json");
+                        xhr2.setRequestHeader("Authorization", `Bearer ${access_token}`);
+                        xhr2.setRequestHeader("Access-Control-Allow-Origin", "*");
+                        xhr2.send(params2);
                     }
                 };
                 xhr.open("POST", `https://secure.snd.payu.com/pl/standard/user/oauth/authorize`, true);
                 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr2.setRequestHeader("Access-Control-Allow-Origin", "*");
                 xhr.send(params);
             }, false);
 
