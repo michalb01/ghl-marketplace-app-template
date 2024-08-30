@@ -37,40 +37,11 @@
     </noscript>
     <script>
 
-let iframe;
-        let messageInterval;
-
-        // Function to send a message to the iframe
-        function sendMessageToIframe() {
-            if (iframe && iframe.contentWindow) { // Check if iframe is available
-                const message = 'Hello from Parent! ' + new Date().toLocaleTimeString();
-                iframe.contentWindow.postMessage(message, '*'); // Send message
-            } else {
-                console.error('Iframe with class "custom-payment-iframe" not found or not loaded.');
-            }
-        }
-
-        // Wait for the iframe to be fully loaded
-        function setupIframe() {
-            const iframes = document.getElementsByClassName('custom-payment-iframe'); // Get all iframe elements with class "custom-payment-iframe"
-            if (iframes.length > 0) { // If iframe is found
-                iframe = iframes[0]; // Store the iframe element
-                
-                // Add an event listener to detect when the iframe is fully loaded
-                iframe.addEventListener('load', () => {
-                    // Start sending messages every 1 second once the iframe is loaded
-                    messageInterval = setInterval(sendMessageToIframe, 1000);
-                });
-            } else {
-                console.error('Iframe with class "custom-payment-iframe" not found in DOM.');
-            }
-        }
-
-        // Ensure that the script runs after the document is fully loaded
-        window.addEventListener('load', setupIframe);
-
-        // Optional: If you want to stop sending messages at some point, you can use this
-        // window.addEventListener('beforeunload', () => clearInterval(messageInterval));
+        // Listen for messages from the parent
+        window.addEventListener('message', (event) => {
+            console.log('Message received from parent:', event.data);
+            // Optionally, you can send a response back to the parent here
+        });
 
         //dobry kod ponizej
 
