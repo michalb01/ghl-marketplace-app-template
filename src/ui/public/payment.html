@@ -1,71 +1,102 @@
 <!DOCTYPE html>
 <html lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <title>Payment</title>
-    </head>
-    <body>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Payment</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #paymentButton {
+            padding: 15px 30px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Hide button initially */
+        }
+    </style>
+</head>
+<body>
 
-        <noscript>
-            <strong>We're sorry but this page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-        </noscript>
-        <script>
-            window.addEventListener('message', function(event) {
-                var data = JSON.parse(event.data);
+    <button id="paymentButton">Proceed to Payment</button>
 
-                if (data.type === 'payment_initiate_props') {
-                    console.log('Received payment initiation props:', data);
-                }
+    <noscript>
+        <strong>We're sorry but this page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <script>
+        window.addEventListener('message', function(event) {
+            var data = JSON.parse(event.data);
 
-                var client_data = data.publishableKey;
-                const splited_client_data = client_data.split("/");
-                var client_id = splited_client_data[0];
-                var client_secret = splited_client_data[1];
-
-                var ip = fetch('https://api.ipify.org?format=json')
-                    .then(response => response.json())
-                    .then(d => {
-                        console.log(d.ip);
-
-                        var params = JSON.stringify({
-                            client_id: client_id,
-                            client_secret: client_secret,
-                            customerIp: d.ip,
-                            contactName: data.contact.name,
-                            transactionId: data.transactionId,
-                            currencyCode: data.currency.toUpperCase(),
-                            amount: data.amount * 100
-                        });
-                        var xhr = new XMLHttpRequest();
-                        xhr.onreadystatechange = function () {
-                            if (xhr.readyState === 4 && xhr.status === 200) {
-                                var json = JSON.parse(xhr.responseText);
-                                var uri = json.uri;
-                                window.open(uri, "_blank")
-                            }
-                        };
-                        xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
-                        xhr.setRequestHeader("Content-type", "application/json")
-                        xhr.send(params);
-                    })
-                    .catch(error => {
-                        console.log('Error:', error);
-                    });
-                console.log(`IP: ${ip}`);
-            }, false);
-
-            function onWindowLoad() {
-                window.parent.postMessage(JSON.stringify({
-                    type: 'custom_provider_ready',
-                    loaded: true
-                }), '*');
-
-                console.log("custom_provider_ready post sent!")
+            if (data.type === 'payment_initiate_props') {
+                console.log('Received payment initiation props:', data);
             }
 
-            window.onload = onWindowLoad;
-        </script>
-    </body>
+            var client_data = data.publishableKey;
+            const splited_client_data = client_data.split("/");
+            var client_id = splited_client_data[0];
+            var client_secret = splited_client_data[1];
+
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(d => {
+                    console.log(d.ip);
+
+                    var params = JSON.stringify({
+                        client_id: client_id,
+                        client_secret: client_secret,
+                        customerIp: d.ip,
+                        contactName: data.contact.name,
+                        transactionId: data.transactionId,
+                        currencyCode: data.currency.toUpperCase(),
+                        amount: data.amount * 100
+                    });
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            var json = JSON.parse(xhr.responseText);
+                            var uri = json.uri;
+
+                            // Show the button and set up click event
+                            var button = document.getElementById('paymentButton');
+                            button.style.display = 'block'; // Show the button
+
+                            button.onclick = function() {
+                                window.open(uri, "_blank");
+                            };
+                        }
+                    };
+                    xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
+                    xhr.setRequestHeader("Content-type", "application/json");
+                    xhr.send(params);
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                });
+
+            console.log(`IP: ${d.ip}`);
+        }, false);
+
+        function onWindowLoad() {
+            window.parent.postMessage(JSON.stringify({
+                type: 'custom_provider_ready',
+                loaded: true
+            }), '*');
+
+            console.log("custom_provider_ready post sent!");
+        }
+
+        window.onload = onWindowLoad;
+    </script>
+</body>
 </html>
