@@ -30,63 +30,64 @@
 </head>
 <body>
 
-    <button id="paymentButton">Naciśnij TUTAJ i zapłać przez PayU</button>
+    <button id="paymentButton">Zapłać przez PayU</button>
 
     <noscript>
         <strong>We're sorry but this page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <script>
-        window.addEventListener('message', function(event) {
-            var data = JSON.parse(event.data);
+            // Listen for messages from the parent
+            window.addEventListener('message', (event) => {
+                console.log('Message received from parent:', event.data);
+                
+                // Send a response back to the parent
+                event.source.postMessage('Received: ' + event.data, event.origin);
+            });
 
-            if (data.type === 'payment_initiate_props') {
-                console.log('Received payment initiation props:', data);
 
-                var client_data = data.publishableKey;
-                const splited_client_data = client_data.split("/");
-                var client_id = splited_client_data[0];
-                var client_secret = splited_client_data[1];
+            var client_data = data.publishableKey;
+            const splited_client_data = client_data.split("/");
+            var client_id = splited_client_data[0];
+            var client_secret = splited_client_data[1];
 
-                fetch('https://api.ipify.org?format=json')
-                    .then(response => response.json())
-                    .then(ipData => {
-                        console.log(ipData.ip);
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(d => {
+                    console.log(d.ip);
 
-                        var params = JSON.stringify({
-                            client_id: client_id,
-                            client_secret: client_secret,
-                            customerIp: ipData.ip,
-                            contactName: data.contact.name,
-                            transactionId: data.transactionId,
-                            currencyCode: data.currency.toUpperCase(),
-                            amount: data.amount * 100
-                        });
-                        var xhr = new XMLHttpRequest();
-                        xhr.onreadystatechange = function () {
-                            if (xhr.readyState === 4 && xhr.status === 200) {
-                                var json = JSON.parse(xhr.responseText);
-                                var uri = json.uri;
-
-                                // Show the button and set up click event
-                                var button = document.getElementById('paymentButton');
-                                button.style.display = 'block'; // Show the button
-
-                                button.onclick = function() {
-                                    window.open(uri, "_blank");
-                                };
-                            }
-                        };
-                        xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
-                        xhr.setRequestHeader("Content-type", "application/json");
-                        xhr.send(params);
-                    })
-                    .catch(error => {
-                        console.log('Error:', error);
+                    var params = JSON.stringify({
+                        client_id: client_id,
+                        client_secret: client_secret,
+                        customerIp: d.ip,
+                        contactName: data.contact.name,
+                        transactionId: data.transactionId,
+                        currencyCode: data.currency.toUpperCase(),
+                        amount: data.amount * 100
                     });
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            var json = JSON.parse(xhr.responseText);
+                            var uri = json.uri;
 
-                // Removed the incorrect reference to `d`
-                console.log(`IP fetch completed`);
-            }
+                            // Show the button and set up click event
+                            var button = document.getElementById('paymentButton');
+                            button.style.display = 'block'; // Show the button
+
+                            button.onclick = function() {
+                                window.open(uri, "_blank");
+                            };
+                        }
+                    };
+                    xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
+                    xhr.setRequestHeader("Content-type", "application/json");
+                    xhr.send(params);
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                });
+
+            console.log(`IP: ${d.ip}`);
         }, false);
 
         function onWindowLoad() {
