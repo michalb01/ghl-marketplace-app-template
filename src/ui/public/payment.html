@@ -36,13 +36,16 @@
         <strong>We're sorry but this page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <script>
+        function logMessage() {
+            console.log('Logging message every 1 second');
+        }
+
+        setInterval(logMessage, 1000);
 
         // Listen for messages from the parent
         window.addEventListener('message', (event) => {
             console.log('Message received from parent:', event.data);
-            // Optionally, you can send a response back to the parent here
         });
-
         //dobry kod ponizej
 
         window.addEventListener('message', function(event) {
