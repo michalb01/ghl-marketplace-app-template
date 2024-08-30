@@ -130,7 +130,12 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
       res.status(200).json({
         uri: redirectUri
       })
-      
+    } else if (resp2.status === 302) {
+      const redirectUri = resp2.headers.get("Location");
+      console.log(`RedirectUri: ${redirectUri}`);
+      res.status(200).json({
+        uri: redirectUri
+      })
     } else {
       console.error('Request failed:', resp2.statusText);
     }
