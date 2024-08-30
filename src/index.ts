@@ -81,6 +81,59 @@ app.post("/payu-settings", async (req: Request, res: Response) => {
   }
 });
 
+app.post("/payment-redirect", async (req: Request, res: Response) => {
+  var data = req.body;
+  console.log(`KURWA ZWROTNE: ${data}`);
+
+  try {
+    var params = `grant_type=client_credentials&client_id=${data.client_id}&client_secret=${data.client_secret}`
+    const resp = await axios.post(
+      "https://secure.snd.payu.com/pl/standard/user/oauth/authorize",
+      params,
+      { 
+        headers: {
+          "Content-type": "application/x-www-form-urlencoded"
+        }
+      }
+    );
+    var access_token = resp.data.access_token;
+
+    console.log(`Transaction access token: ${access_token}`);
+    
+    const resp2 = await axios.post(
+      "https://secure.snd.payu.com/api/v2_1/orders",
+      JSON.stringify({
+        customerIp: data.customerIp,
+        merchantPosId: data.client_id,
+        description: `${data.contactName} ${data.transactionId}`,
+        currencyCode: data.currencyCode,
+        totalAmount: data.amount,
+        products: [
+          {
+              name: `${data.transactionId}`,
+              unitPrice: data.amount,
+              quantity: 1
+          }
+        ]
+      }),
+      {
+        headers: {
+          "Content-type": "application/json",
+          "Authorization": `Bearer ${access_token}`
+        }
+      }
+    );
+
+    var redirectUri = resp2.data.redirectUri;
+    console.log(`RedirectUri: ${redirectUri}`);
+
+    open(redirectUri);
+  }
+  catch (e) {
+    console.error(e);
+  }
+});
+
 app.post("/decrypt-sso",async (req: Request, res: Response) => {
   const {key} = req.body || {}
   if(!key){
