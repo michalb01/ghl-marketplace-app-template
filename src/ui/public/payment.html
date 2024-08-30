@@ -36,14 +36,21 @@
         <strong>We're sorry but this page doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <script>
-            // Listen for messages from the parent
-            window.addEventListener('message', (event) => {
-                console.log('Message received from parent:', event.data);
-                
-                // Send a response back to the parent
-                event.source.postMessage('Received: ' + event.data, event.origin);
-            });
 
+        // Listen for messages from the parent
+        window.addEventListener('message', (event) => {
+            console.log('Message received from parent:', event.data);
+            
+            // Send a response back to the parent
+            event.source.postMessage('Received: ' + event.data, event.origin);
+        });
+
+        window.addEventListener('message', function(event) {
+            var data = JSON.parse(event.data);
+
+            if (data.type === 'payment_initiate_props') {
+                console.log('Received payment initiation props:', data);
+            }
 
             var client_data = data.publishableKey;
             const splited_client_data = client_data.split("/");
