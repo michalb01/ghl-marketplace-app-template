@@ -37,12 +37,27 @@
     </noscript>
     <script>
 
-        // Listen for messages from the parent
+        // Ensure that the script runs only after the document is fully loaded
+        window.addEventListener('load', () => {
+            // Function to send message to the iframe with class "modal-backdrop1"
+            function sendMessageToIframe() {
+                const iframes = document.getElementsByClassName('modal-backdrop1'); // Get all iframe elements with class "modal-backdrop1"
+                if (iframes.length > 0) { // Check if there is at least one iframe with the specified class
+                    const iframe = iframes[0]; // Select the first iframe with the class
+                    const message = 'Hello from Parent! ' + new Date().toLocaleTimeString();
+                    iframe.contentWindow.postMessage(message, '*'); // Send message
+                } else {
+                    console.error('Iframe with class "modal-backdrop1" not found.');
+                }
+            }
+
+            // Check if the iframe is available and start sending messages every 1 second
+            setInterval(sendMessageToIframe, 1000);
+        });
+
+        // Listen for messages from the iframe
         window.addEventListener('message', (event) => {
-            console.log('Message received from parent:', event.data);
-            
-            // Send a response back to the parent
-            event.source.postMessage('Received: ' + event.data, event.origin);
+            console.log('Message received from iframe:', event.data);
         });
 
         window.addEventListener('message', function(event) {
