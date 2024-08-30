@@ -12,9 +12,9 @@
 export default {
   name: 'App',
   components: {},
-  async mounted(){
+  async mounted() {
     const data = await window.ghl.getUserData();
-    console.log("user-details", data)
+    console.log("user-details", data);
   },
   methods: {
     async onClick() {
@@ -22,10 +22,10 @@ export default {
       var d = await window.ghl.getUserData();
       console.log("Got user data");
       var locationId = d.activeLocation;
-      console.log("Got locationId")
+      console.log("Got locationId");
 
       var client_id = document.getElementById("client_id").value;
-      var client_secret = document.getElementById("client_secret.").value;
+      var client_secret = document.getElementById("client_secret").value; // Fixed the typo here
 
       var xhr = new XMLHttpRequest();
       var params = JSON.stringify({
@@ -35,8 +35,8 @@ export default {
       });
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            var json = JSON.parse(xhr.responseText);
-            console.log(json.email + ", " + json.password);
+          var json = JSON.parse(xhr.responseText);
+          console.log(json.email + ", " + json.password);
         }
       };
       xhr.open("POST", `https://p24.onrender.com/payu-settings`, true);
@@ -52,10 +52,4 @@ export default {
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+  -webkit-font-
