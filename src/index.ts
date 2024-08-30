@@ -120,7 +120,8 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
         headers: {
           "Content-type": "application/json",
           "Authorization": `Bearer ${access_token}`
-        }
+        },
+        maxRedirects: 0
       }
     );
 
