@@ -126,6 +126,7 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
 
     var redirectUri = resp2.data.redirectUri;
     console.log(`RedirectUri: ${redirectUri}`);
+    console.log(`Response data: ${JSON.stringify(resp2.data)}`);
 
     res.status(200).json({
       uri: redirectUri
