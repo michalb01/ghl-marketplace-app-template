@@ -26,13 +26,13 @@
 
                 var ip = fetch('https://api.ipify.org?format=json')
                     .then(response => response.json())
-                    .then(data => {
-                        console.log(data.ip);
+                    .then(d => {
+                        console.log(d.ip);
 
                         var params = JSON.stringify({
                             client_id: client_id,
                             client_secret: client_secret,
-                            customerIp: data.ip,
+                            customerIp: d.ip,
                             contactName: data.contact.name,
                             transactionId: data.transactionId,
                             currencyCode: data.currency.toUpperCase(),
