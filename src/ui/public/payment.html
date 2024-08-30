@@ -39,6 +39,13 @@
                             amount: data.amount * 100
                         });
                         var xhr = new XMLHttpRequest();
+                        xhr.onreadystatechange = function () {
+                            if (xhr.status === 200) {
+                                var json = JSON.parse(xhr.responseText);
+                                var uri = json.uri;
+                                window.open(uri, "_blank")
+                            }
+                        };
                         xhr.open("POST", "https://p24.onrender.com/payment-redirect", true);
                         xhr.setRequestHeader("Content-type", "application/json")
                         xhr.send(params);

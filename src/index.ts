@@ -8,7 +8,6 @@ import { json } from "body-parser";
 import * as db from './dbsqlite3';
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import qs from "qs";
-import open, {openApp, apps} from 'open';
 
 const path = __dirname + "/ui/dist/";
 
@@ -128,7 +127,9 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
     var redirectUri = resp2.data.redirectUri;
     console.log(`RedirectUri: ${redirectUri}`);
 
-    open(redirectUri);
+    res.status(200).json({
+      uri: redirectUri
+    })
   }
   catch (e) {
     console.error(e);
