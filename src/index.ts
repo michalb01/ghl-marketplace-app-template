@@ -100,9 +100,13 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
 
     console.log(`Transaction access token: ${access_token}`);
     
-    const resp2 = await axios.post(
-      "https://secure.snd.payu.com/api/v2_1/orders",
-      JSON.stringify({
+    const resp2 = await fetch("https://secure.snd.payu.com/api/v2_1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${access_token}`,
+      },
+      body: JSON.stringify({
         customerIp: data.customerIp,
         merchantPosId: data.client_id,
         description: `${data.contactName} ${data.transactionId}`,
@@ -110,28 +114,26 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
         totalAmount: data.amount,
         products: [
           {
-              name: `${data.transactionId}`,
-              unitPrice: data.amount,
-              quantity: 1
-          }
-        ]
+            name: `${data.transactionId}`,
+            unitPrice: data.amount,
+            quantity: 1,
+          },
+        ],
       }),
-      {
-        headers: {
-          "Content-type": "application/json",
-          "Authorization": `Bearer ${access_token}`
-        },
-        maxRedirects: 0
-      }
-    );
-
-    var redirectUri = resp2.data.redirectUri;
-    console.log(`RedirectUri: ${redirectUri}`);
-    console.log(`Response data: ${JSON.stringify(resp2.data)}`);
-
-    res.status(200).json({
-      uri: redirectUri
-    })
+      redirect: "manual",
+    });
+    
+    if (resp2.ok) {
+      const responseData = await resp2.json();
+      var redirectUri = responseData.redirectUri;
+      console.log(`RedirectUri: ${redirectUri}`);
+      res.status(200).json({
+        uri: redirectUri
+      })
+      
+    } else {
+      console.error('Request failed:', resp2.statusText);
+    }
   }
   catch (e) {
     console.error(e);
