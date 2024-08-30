@@ -40,7 +40,7 @@
                         });
                         var xhr = new XMLHttpRequest();
                         xhr.onreadystatechange = function () {
-                            if (xhr.status === 200) {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
                                 var json = JSON.parse(xhr.responseText);
                                 var uri = json.uri;
                                 window.open(uri, "_blank")
