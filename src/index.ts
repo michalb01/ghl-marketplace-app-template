@@ -107,6 +107,7 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
         "Authorization": `Bearer ${access_token}`,
       },
       body: JSON.stringify({
+        continueUrl: "https://dodatkowapensja.pl/thank-you",
         customerIp: data.customerIp,
         merchantPosId: data.client_id,
         description: `${data.contactName} ${data.transactionId}`,
