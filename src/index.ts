@@ -107,6 +107,7 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
       },
       body: JSON.stringify({
         continueUrl: "https://dodatkowapensja.pl/thank-you",
+        notifyUrl: "https://p24.onrender.com/status",
         customerIp: data.customerIp,
         merchantPosId: data.client_id,
         description: `${data.contactName} ${data.transactionId}`,
