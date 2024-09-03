@@ -83,12 +83,11 @@ app.post("/payu-settings", async (req: Request, res: Response) => {
 
 app.post("/payment-redirect", async (req: Request, res: Response) => {
   var data = req.body;
-  console.log(`KURWA ZWROTNE: ${data}`);
 
   try {
     var params = `grant_type=client_credentials&client_id=${data.client_id}&client_secret=${data.client_secret}`
     const resp = await axios.post(
-      "https://secure.snd.payu.com/pl/standard/user/oauth/authorize",
+      "https://secure.payu.com/pl/standard/user/oauth/authorize",
       params,
       { 
         headers: {
@@ -100,7 +99,7 @@ app.post("/payment-redirect", async (req: Request, res: Response) => {
 
     console.log(`Transaction access token: ${access_token}`);
     
-    const resp2 = await fetch("https://secure.snd.payu.com/api/v2_1/orders", {
+    const resp2 = await fetch("https://secure.payu.com/api/v2_1/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
